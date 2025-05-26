@@ -27,13 +27,13 @@ let db1 = new sqlite3.Database("./test1.db");
 db1.all(
   `
   SELECT
-  o.customer_id,
-  MAX(o.order_date) AS last_order_date
+  orders.customer_id,
+  MAX(orders.order_date) AS last_order_date
   FROM
-  orders o
-  JOIN order_items oi ON o.order_id = oi.order_id
+  orders 
+  JOIN order_items oi ON orders.order_id = oi.order_id
   GROUP BY
-  o.customer_id
+  orders.customer_id
   HAVING
   COUNT(DISTINCT oi.product_id) = (
     SELECT COUNT(*) FROM products
@@ -59,13 +59,13 @@ let db2 = new sqlite3.Database("./test.db");
 db2.all(
   `
   SELECT 
-  c.customer_name,
-  COUNT(o.order_id) AS total_orders,
-  SUM(o.order_total) AS total_spent,
-  AVG(o.order_total) AS average_order_value
-  FROM customers c
-  LEFT JOIN orders o ON c.customer_id = o.customer_id
-    GROUP BY c.customer_id, c.customer_name
+  customers.customer_name,
+  COUNT(orders.order_id) AS total_orders,
+  SUM(orders.order_total) AS total_spent,
+  AVG(orders.order_total) AS average_order_value
+  FROM customers 
+  LEFT JOIN orders ON customers.customer_id = orders.customer_id
+    GROUP BY customers.customer_id, customers.customer_name
     ORDER BY total_spent DESC;
     `,
   [],
